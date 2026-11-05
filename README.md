@@ -23,7 +23,7 @@ Run `./bin/test` to verify note persistence. On Omarchy, `./bin/install` install
 
 Install Qt 6 (MSVC 2022 64-bit kit) with the Qt online installer, plus Visual Studio Build Tools.
 From the **"x64 Native Tools Command Prompt for VS 2022"**, add Qt's `bin` directory to `PATH`
-(for example `set PATH=C:\Qt\6.8.3\msvc2022_64\bin;%PATH%`), then:
+(for example `set PATH=C:\Qt\6.12.0\msvc2022_64\bin;%PATH%`), then:
 
 ```powershell
 powershell -ExecutionPolicy Bypass -File bin\build.ps1    # build\keepnote.exe
