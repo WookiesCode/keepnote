@@ -17,6 +17,12 @@ ApplicationWindow {
     Material.accent: "#FFD60A"
     property int pendingCloseIndex: -1
     property int viewMode: 0 // 0: editor, 1: split, 2: preview
+    // macOS draws its own title bar and owns the global menu bar.
+    readonly property bool isMac: Qt.platform.os === "osx" || Qt.platform.os === "macos"
+    readonly property bool isWindows: Qt.platform.os === "windows"
+    // Windows and macOS decorate the window natively; the in-app title bar is for Linux tiling WMs.
+    readonly property bool customTitleBar: !isMac && !isWindows
+    menuBar: isMac ? mainMenu : null
 
     onViewModeChanged: {
         if (viewMode === 2)
@@ -65,12 +71,12 @@ ApplicationWindow {
         onActivated: window.requestRenameTab(backend.currentIndex)
     }
     Shortcut {
-        sequence: "Ctrl+Tab"
+        sequence: window.isMac ? "Meta+Tab" : "Ctrl+Tab"
         context: Qt.ApplicationShortcut
         onActivated: backend.selectTab((backend.currentIndex + 1) % backend.tabs.length)
     }
     Shortcut {
-        sequence: "Ctrl+Shift+Tab"
+        sequence: window.isMac ? "Meta+Shift+Tab" : "Ctrl+Shift+Tab"
         context: Qt.ApplicationShortcut
         onActivated: backend.selectTab((backend.currentIndex + backend.tabs.length - 1) % backend.tabs.length)
     }
@@ -152,7 +158,8 @@ ApplicationWindow {
         Rectangle {
             id: titleBar
             width: parent.width
-            height: 48
+            height: window.customTitleBar ? 48 : 0
+            visible: window.customTitleBar
             color: "#202020"
             MouseArea {
                 anchors.fill: parent
@@ -356,7 +363,7 @@ ApplicationWindow {
 
         Item {
             width: parent.width
-            height: parent.height - titleBar.height - mainMenu.height - tabStrip.height - statusBar.height
+            height: parent.height - titleBar.height - (window.isMac ? 0 : mainMenu.height) - tabStrip.height - statusBar.height
 
             Row {
                 anchors.fill: parent
@@ -380,7 +387,7 @@ ApplicationWindow {
                         textFormat: TextEdit.PlainText
                         wrapMode: TextEdit.Wrap
                         selectByMouse: true
-                        font.family: "monospace"
+                        font.family: window.isMac ? "Menlo" : window.isWindows ? "Consolas" : "monospace"
                         font.pixelSize: 16
                         background: Rectangle { color: "#151515" }
                         onTextChanged: backend.setText(text)

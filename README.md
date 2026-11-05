@@ -18,3 +18,22 @@ The **Language** menu selects highlighting for Plain Text, Markdown, and Log, wi
 The first version's single note is imported automatically when you first open this version. Its original `note.txt` is kept as a backup.
 
 Run `./bin/test` to verify note persistence. On Omarchy, `./bin/install` installs the package and launcher entry.
+
+## Windows
+
+Install Qt 6 (MSVC 2022 64-bit kit) with the Qt online installer, plus Visual Studio Build Tools.
+From the **"x64 Native Tools Command Prompt for VS 2022"**, add Qt's `bin` directory to `PATH`
+(for example `set PATH=C:\Qt\6.8.3\msvc2022_64\bin;%PATH%`), then:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File bin\build.ps1    # build\keepnote.exe
+powershell -ExecutionPolicy Bypass -File bin\test.ps1     # run the test suite
+powershell -ExecutionPolicy Bypass -File bin\package.ps1  # dist\keepnote-windows.zip (no Qt install needed to run)
+```
+
+Every push is also built and tested on Windows, macOS and Linux by GitHub Actions;
+the Windows job uploads `keepnote-windows.zip` as a downloadable artifact.
+
+## macOS
+
+`brew install qt`, then `bin/build` and `bin/test` as on Linux. The app is `build/keepnote.app`.

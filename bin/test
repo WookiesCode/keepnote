@@ -3,6 +3,6 @@ set -eu
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 mkdir -p "$ROOT/build/tests"
 cd "$ROOT/build/tests"
-qmake6 "$ROOT/tests/tests.pro"
-make -j"$(nproc)"
+"${QMAKE:-$(command -v qmake6 || command -v qmake)}" "$ROOT/tests/tests.pro"
+make -j"$(nproc 2>/dev/null || sysctl -n hw.ncpu)"
 QT_QPA_PLATFORM=offscreen QT_QPA_PLATFORMTHEME= ./keepnote_tests
