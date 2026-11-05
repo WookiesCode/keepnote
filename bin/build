@@ -3,5 +3,5 @@ set -eu
 ROOT="$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)"
 mkdir -p "$ROOT/build"
 cd "$ROOT/build"
-qmake6 "$ROOT/keepnote.pro"
-make -j"$(nproc)"
+"${QMAKE:-$(command -v qmake6 || command -v qmake)}" "$ROOT/keepnote.pro"
+make -j"$(nproc 2>/dev/null || sysctl -n hw.ncpu)"

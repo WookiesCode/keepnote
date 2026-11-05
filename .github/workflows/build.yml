@@ -1,0 +1,60 @@
+name: build
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            qt-arch: win64_msvc2022_64
+          - os: macos-latest
+            qt-arch: clang_64
+          - os: ubuntu-latest
+            qt-arch: linux_gcc_64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: jurplel/install-qt-action@v4
+        with:
+          version: '6.8.3'
+          arch: ${{ matrix.qt-arch }}
+          cache: true
+
+      - name: Set up MSVC
+        if: runner.os == 'Windows'
+        uses: ilammy/msvc-dev-cmd@v1
+
+      - name: Install Linux build deps
+        if: runner.os == 'Linux'
+        run: sudo apt-get update && sudo apt-get install -y libgl1-mesa-dev libxkbcommon-dev
+
+      - name: Test (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./bin/test.ps1
+
+      - name: Package (Windows)
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./bin/package.ps1
+
+      - uses: actions/upload-artifact@v4
+        if: runner.os == 'Windows'
+        with:
+          name: keepnote-windows
+          path: dist/keepnote-windows.zip
+
+      - name: Test (macOS / Linux)
+        if: runner.os != 'Windows'
+        run: ./bin/test
+
+      - name: Build (macOS / Linux)
+        if: runner.os != 'Windows'
+        run: ./bin/build
