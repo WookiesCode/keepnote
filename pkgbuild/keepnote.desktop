@@ -1,0 +1,9 @@
+[Desktop Entry]
+Type=Application
+Name=Keepnote
+Comment=One note that saves automatically
+Exec=keepnote
+Icon=keepnote
+Terminal=false
+Categories=Utility;TextEditor;
+StartupWMClass=keepnote
